@@ -19,6 +19,7 @@
 		A100000A /* MarkdownOutputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000019 /* MarkdownOutputView.swift */; };
 		A100000B /* MarkdownPreviewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001A /* MarkdownPreviewState.swift */; };
 		A100000C /* MarkdownConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001B /* MarkdownConverter.swift */; };
+		A100000D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = A10000D1 /* Markdown */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100000D /* Markdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +143,9 @@
 			dependencies = (
 			);
 			name = Utilities;
+			packageProductDependencies = (
+				A10000D1 /* Markdown */,
+			);
 			productName = Utilities;
 			productReference = A1000020 /* Utilities.app */;
 			productType = "com.apple.product-type.application";
@@ -169,6 +174,9 @@
 				Base,
 			);
 			mainGroup = A1000040;
+			packageReferences = (
+				A10000D0 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+			);
 			productRefGroup = A1000042 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -411,6 +419,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A10000D0 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-markdown.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A10000D1 /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000D0 /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A1000070 /* Project object */;
 }

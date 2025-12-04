@@ -1,6 +1,7 @@
 import Foundation
+import Markdown
 
-/// Converts Markdown to HTML
+/// Converts Markdown to HTML using Apple's swift-markdown
 enum MarkdownConverter {
 
     /// GitHub Markdown CSS styling (no explicit backgrounds for dark/light compatibility)
@@ -26,8 +27,7 @@ enum MarkdownConverter {
         line-height: 1.25;
     }
 
-    h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid currentColor; opacity: 0.3; }
-    h1 { opacity: 1; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
+    h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
     h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
     h3 { font-size: 1.25em; }
     h4 { font-size: 1em; }
@@ -143,40 +143,26 @@ enum MarkdownConverter {
         height: auto;
         box-sizing: content-box;
     }
+
+    .task-list-item {
+        list-style-type: none;
+        margin-left: -1.5em;
+    }
+
+    .task-list-item input[type="checkbox"] {
+        margin-right: 0.5em;
+    }
+
+    del {
+        text-decoration: line-through;
+    }
     """
 
     /// Convert markdown to HTML (body content only)
     static func toHTML(_ markdown: String) -> String {
-        var html = markdown
-
-        // Process code blocks first (to avoid conflicts with other patterns)
-        html = processCodeBlocks(html)
-
-        // Process inline code
-        html = processInlineCode(html)
-
-        // Process headers
-        html = processHeaders(html)
-
-        // Process bold and italic
-        html = processBoldItalic(html)
-
-        // Process links
-        html = processLinks(html)
-
-        // Process blockquotes
-        html = processBlockquotes(html)
-
-        // Process lists
-        html = processLists(html)
-
-        // Process horizontal rules
-        html = processHorizontalRules(html)
-
-        // Process paragraphs
-        html = processParagraphs(html)
-
-        return html
+        let document = Document(parsing: markdown)
+        var htmlVisitor = HTMLVisitor()
+        return htmlVisitor.visitDocument(document)
     }
 
     /// Convert markdown to HTML with embedded CSS
@@ -202,237 +188,195 @@ enum MarkdownConverter {
     static func toPreviewHTML(_ markdown: String) -> String {
         toHTMLWithCSS(markdown)
     }
-
-    // MARK: - Private Processing Methods
-
-    private static func processCodeBlocks(_ text: String) -> String {
-        let pattern = "```(\\w*)\\n([\\s\\S]*?)```"
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
-            return text
-        }
-
-        let range = NSRange(text.startIndex..., in: text)
-        var result = text
-
-        let matches = regex.matches(in: text, options: [], range: range).reversed()
-        for match in matches {
-            if let fullRange = Range(match.range, in: result),
-               let codeRange = Range(match.range(at: 2), in: result) {
-                let code = String(result[codeRange])
-                    .replacingOccurrences(of: "<", with: "&lt;")
-                    .replacingOccurrences(of: ">", with: "&gt;")
-                let replacement = "<pre><code>\(code)</code></pre>"
-                result.replaceSubrange(fullRange, with: replacement)
-            }
-        }
-
-        return result
-    }
-
-    private static func processInlineCode(_ text: String) -> String {
-        let pattern = "`([^`]+)`"
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
-            return text
-        }
-
-        let range = NSRange(text.startIndex..., in: text)
-        var result = text
-
-        let matches = regex.matches(in: text, options: [], range: range).reversed()
-        for match in matches {
-            if let fullRange = Range(match.range, in: result),
-               let codeRange = Range(match.range(at: 1), in: result) {
-                let code = String(result[codeRange])
-                    .replacingOccurrences(of: "<", with: "&lt;")
-                    .replacingOccurrences(of: ">", with: "&gt;")
-                result.replaceSubrange(fullRange, with: "<code>\(code)</code>")
-            }
-        }
-
-        return result
-    }
-
-    private static func processHeaders(_ text: String) -> String {
-        var result = text
-
-        // H6 to H1 (process longer patterns first)
-        for level in (1...6).reversed() {
-            let pattern = "^#{" + String(level) + "}\\s+(.+?)\\s*#*$"
-            if let regex = try? NSRegularExpression(pattern: pattern, options: .anchorsMatchLines) {
-                let range = NSRange(result.startIndex..., in: result)
-                result = regex.stringByReplacingMatches(
-                    in: result,
-                    options: [],
-                    range: range,
-                    withTemplate: "<h\(level)>$1</h\(level)>"
-                )
-            }
-        }
-
-        return result
-    }
-
-    private static func processBoldItalic(_ text: String) -> String {
-        var result = text
-
-        // Bold: **text** or __text__
-        if let regex = try? NSRegularExpression(pattern: "\\*\\*(.+?)\\*\\*|__(.+?)__", options: []) {
-            let range = NSRange(result.startIndex..., in: result)
-            result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: "<strong>$1$2</strong>")
-        }
-
-        // Italic: *text* or _text_
-        if let regex = try? NSRegularExpression(pattern: "\\*(.+?)\\*|_(.+?)_", options: []) {
-            let range = NSRange(result.startIndex..., in: result)
-            result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: "<em>$1$2</em>")
-        }
-
-        return result
-    }
-
-    private static func processLinks(_ text: String) -> String {
-        var result = text
-
-        // Links: [text](url)
-        if let regex = try? NSRegularExpression(pattern: "\\[(.+?)\\]\\((.+?)\\)", options: []) {
-            let range = NSRange(result.startIndex..., in: result)
-            result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: "<a href=\"$2\">$1</a>")
-        }
-
-        return result
-    }
-
-    private static func processBlockquotes(_ text: String) -> String {
-        var lines = text.components(separatedBy: "\n")
-        var inBlockquote = false
-        var result: [String] = []
-
-        for line in lines {
-            if line.hasPrefix(">") {
-                let content = String(line.dropFirst()).trimmingCharacters(in: .whitespaces)
-                if !inBlockquote {
-                    result.append("<blockquote>")
-                    inBlockquote = true
-                }
-                if content.isEmpty {
-                    result.append("<br>")
-                } else {
-                    result.append(content)
-                }
-            } else {
-                if inBlockquote {
-                    result.append("</blockquote>")
-                    inBlockquote = false
-                }
-                result.append(line)
-            }
-        }
-
-        if inBlockquote {
-            result.append("</blockquote>")
-        }
-
-        return result.joined(separator: "\n")
-    }
-
-    private static func processLists(_ text: String) -> String {
-        var lines = text.components(separatedBy: "\n")
-        var result: [String] = []
-        var inUnorderedList = false
-        var inOrderedList = false
-
-        for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-            // Unordered list: * item, - item, + item
-            if trimmed.hasPrefix("* ") || trimmed.hasPrefix("- ") || trimmed.hasPrefix("+ ") {
-                if inOrderedList {
-                    result.append("</ol>")
-                    inOrderedList = false
-                }
-                if !inUnorderedList {
-                    result.append("<ul>")
-                    inUnorderedList = true
-                }
-                let content = String(trimmed.dropFirst(2))
-                result.append("<li>\(content)</li>")
-            }
-            // Ordered list: 1. item
-            else if let regex = try? NSRegularExpression(pattern: "^\\d+\\.\\s+(.+)$", options: []),
-                    let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(trimmed.startIndex..., in: trimmed)),
-                    let contentRange = Range(match.range(at: 1), in: trimmed) {
-                if inUnorderedList {
-                    result.append("</ul>")
-                    inUnorderedList = false
-                }
-                if !inOrderedList {
-                    result.append("<ol>")
-                    inOrderedList = true
-                }
-                let content = String(trimmed[contentRange])
-                result.append("<li>\(content)</li>")
-            }
-            else {
-                if inUnorderedList {
-                    result.append("</ul>")
-                    inUnorderedList = false
-                }
-                if inOrderedList {
-                    result.append("</ol>")
-                    inOrderedList = false
-                }
-                result.append(line)
-            }
-        }
-
-        if inUnorderedList {
-            result.append("</ul>")
-        }
-        if inOrderedList {
-            result.append("</ol>")
-        }
-
-        return result.joined(separator: "\n")
-    }
-
-    private static func processHorizontalRules(_ text: String) -> String {
-        var result = text
-
-        // Horizontal rule: ---, ***, ___
-        if let regex = try? NSRegularExpression(pattern: "^(---+|\\*\\*\\*+|___+)$", options: .anchorsMatchLines) {
-            let range = NSRange(result.startIndex..., in: result)
-            result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: "<hr>")
-        }
-
-        return result
-    }
-
-    private static func processParagraphs(_ text: String) -> String {
-        let blocks = text.components(separatedBy: "\n\n")
-        var result: [String] = []
-
-        for block in blocks {
-            let trimmed = block.trimmingCharacters(in: .whitespacesAndNewlines)
-            if trimmed.isEmpty {
-                continue
-            }
-
-            // Don't wrap already-wrapped HTML elements
-            if trimmed.hasPrefix("<h") ||
-               trimmed.hasPrefix("<ul") ||
-               trimmed.hasPrefix("<ol") ||
-               trimmed.hasPrefix("<blockquote") ||
-               trimmed.hasPrefix("<pre") ||
-               trimmed.hasPrefix("<hr") {
-                result.append(trimmed)
-            } else {
-                // Wrap in paragraph, replace single newlines with <br>
-                let withBreaks = trimmed.replacingOccurrences(of: "\n", with: "<br>\n")
-                result.append("<p>\(withBreaks)</p>")
-            }
-        }
-
-        return result.joined(separator: "\n\n")
-    }
 }
 
+// MARK: - HTML Visitor
+
+/// Walks the Markdown AST and generates HTML
+private struct HTMLVisitor: MarkupVisitor {
+    typealias Result = String
+
+    // MARK: - Document
+
+    mutating func defaultVisit(_ markup: any Markup) -> String {
+        var result = ""
+        for child in markup.children {
+            result += visit(child)
+        }
+        return result
+    }
+
+    mutating func visitDocument(_ document: Document) -> String {
+        defaultVisit(document)
+    }
+
+    // MARK: - Block Elements
+
+    mutating func visitParagraph(_ paragraph: Paragraph) -> String {
+        "<p>\(defaultVisit(paragraph))</p>\n"
+    }
+
+    mutating func visitHeading(_ heading: Heading) -> String {
+        let level = heading.level
+        return "<h\(level)>\(defaultVisit(heading))</h\(level)>\n"
+    }
+
+    mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> String {
+        "<blockquote>\n\(defaultVisit(blockQuote))</blockquote>\n"
+    }
+
+    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> String {
+        let escaped = escapeHTML(codeBlock.code)
+        if let language = codeBlock.language, !language.isEmpty {
+            return "<pre><code class=\"language-\(language)\">\(escaped)</code></pre>\n"
+        }
+        return "<pre><code>\(escaped)</code></pre>\n"
+    }
+
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> String {
+        "<hr>\n"
+    }
+
+    mutating func visitHTMLBlock(_ html: HTMLBlock) -> String {
+        html.rawHTML
+    }
+
+    // MARK: - List Elements
+
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> String {
+        "<ul>\n\(defaultVisit(unorderedList))</ul>\n"
+    }
+
+    mutating func visitOrderedList(_ orderedList: OrderedList) -> String {
+        let start = orderedList.startIndex
+        if start == 1 {
+            return "<ol>\n\(defaultVisit(orderedList))</ol>\n"
+        }
+        return "<ol start=\"\(start)\">\n\(defaultVisit(orderedList))</ol>\n"
+    }
+
+    mutating func visitListItem(_ listItem: ListItem) -> String {
+        if let checkbox = listItem.checkbox {
+            let checked = checkbox == .checked ? " checked" : ""
+            return "<li class=\"task-list-item\"><input type=\"checkbox\" disabled\(checked)>\(defaultVisit(listItem))</li>\n"
+        }
+        return "<li>\(defaultVisit(listItem))</li>\n"
+    }
+
+    // MARK: - Table Elements
+
+    mutating func visitTable(_ table: Table) -> String {
+        "<table>\n\(defaultVisit(table))</table>\n"
+    }
+
+    mutating func visitTableHead(_ tableHead: Table.Head) -> String {
+        "<thead>\n<tr>\n\(defaultVisit(tableHead))</tr>\n</thead>\n"
+    }
+
+    mutating func visitTableBody(_ tableBody: Table.Body) -> String {
+        if tableBody.childCount == 0 {
+            return ""
+        }
+        return "<tbody>\n\(defaultVisit(tableBody))</tbody>\n"
+    }
+
+    mutating func visitTableRow(_ tableRow: Table.Row) -> String {
+        "<tr>\n\(defaultVisit(tableRow))</tr>\n"
+    }
+
+    mutating func visitTableCell(_ tableCell: Table.Cell) -> String {
+        let tag = tableCell.parent is Table.Head ? "th" : "td"
+
+        // Find column index by position in parent
+        var columnIndex = 0
+        if let parent = tableCell.parent {
+            for (index, child) in parent.children.enumerated() {
+                if child.range?.lowerBound == tableCell.range?.lowerBound {
+                    columnIndex = index
+                    break
+                }
+            }
+        }
+
+        // Get alignment from table
+        var alignment = ""
+        if let table = tableCell.parent?.parent as? Table,
+           columnIndex < table.columnAlignments.count,
+           let columnAlignment = table.columnAlignments[columnIndex] {
+            switch columnAlignment {
+            case .left:
+                alignment = " style=\"text-align: left;\""
+            case .center:
+                alignment = " style=\"text-align: center;\""
+            case .right:
+                alignment = " style=\"text-align: right;\""
+            }
+        }
+
+        return "<\(tag)\(alignment)>\(defaultVisit(tableCell))</\(tag)>\n"
+    }
+
+    // MARK: - Inline Elements
+
+    mutating func visitText(_ text: Text) -> String {
+        escapeHTML(text.string)
+    }
+
+    mutating func visitEmphasis(_ emphasis: Emphasis) -> String {
+        "<em>\(defaultVisit(emphasis))</em>"
+    }
+
+    mutating func visitStrong(_ strong: Strong) -> String {
+        "<strong>\(defaultVisit(strong))</strong>"
+    }
+
+    mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> String {
+        "<del>\(defaultVisit(strikethrough))</del>"
+    }
+
+    mutating func visitInlineCode(_ inlineCode: InlineCode) -> String {
+        "<code>\(escapeHTML(inlineCode.code))</code>"
+    }
+
+    mutating func visitLink(_ link: Link) -> String {
+        let title = link.title.map { " title=\"\(escapeHTML($0))\"" } ?? ""
+        return "<a href=\"\(escapeHTML(link.destination ?? ""))\"\(title)>\(defaultVisit(link))</a>"
+    }
+
+    mutating func visitImage(_ image: Image) -> String {
+        let alt = escapeHTML(image.plainText)
+        let src = escapeHTML(image.source ?? "")
+        let title = image.title.map { " title=\"\(escapeHTML($0))\"" } ?? ""
+        return "<img src=\"\(src)\" alt=\"\(alt)\"\(title)>"
+    }
+
+    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> String {
+        "\n"
+    }
+
+    mutating func visitLineBreak(_ lineBreak: LineBreak) -> String {
+        "<br>\n"
+    }
+
+    mutating func visitInlineHTML(_ html: InlineHTML) -> String {
+        html.rawHTML
+    }
+
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> String {
+        if let destination = symbolLink.destination {
+            return "<code>\(escapeHTML(destination))</code>"
+        }
+        return ""
+    }
+
+    // MARK: - Helpers
+
+    private func escapeHTML(_ string: String) -> String {
+        string
+            .replacingOccurrences(of: "&", with: "&amp;")
+            .replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;")
+            .replacingOccurrences(of: "\"", with: "&quot;")
+            .replacingOccurrences(of: "'", with: "&#39;")
+    }
+}
