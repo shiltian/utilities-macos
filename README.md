@@ -26,22 +26,16 @@ A native macOS utilities app built with SwiftUI.
 
 ### Build from Source
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/utilities-macos.git
-   cd utilities-macos
-   ```
-
-2. Open in Xcode:
+1. Open in Xcode:
    ```bash
    open Utilities.xcodeproj
    ```
 
-3. Build and run (⌘R)
+2. Build and run (⌘R)
 
 ### Direct Download
 
-Download the latest release from the [Releases](https://github.com/yourusername/utilities-macos/releases) page.
+Download the latest release from the [Releases](https://github.com/shiltian/utilities-macos/releases) page.
 
 ## License
 
