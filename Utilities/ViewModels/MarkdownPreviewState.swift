@@ -11,8 +11,25 @@ enum MarkdownOutputMode: String, CaseIterable {
 /// State for the Markdown Preview tool
 @Observable
 final class MarkdownPreviewState {
+    // MARK: - Cache Configuration
+    private static let cacheKey = "MarkdownPreviewInputCache"
+    private static let saveDebounceSeconds: UInt64 = 1
+
+    // MARK: - Properties
     var inputText: String = ""
     var outputMode: MarkdownOutputMode = .preview
+
+    /// Task for debounced auto-save
+    private var saveTask: Task<Void, Never>?
+
+    // MARK: - Initialization
+
+    init() {
+        // Restore cached input from previous session
+        if let cachedText = UserDefaults.standard.string(forKey: Self.cacheKey) {
+            inputText = cachedText
+        }
+    }
 
     /// Sample markdown text for demonstration
     static let sampleMarkdown = """
@@ -86,14 +103,31 @@ final class MarkdownPreviewState {
         MarkdownConverter.toPreviewHTML(inputText)
     }
 
+    // MARK: - Auto-Save
+
+    /// Schedule a debounced save of the input text to cache.
+    /// Call this whenever inputText changes to persist after 1 second of inactivity.
+    func scheduleSave() {
+        saveTask?.cancel()
+        saveTask = Task {
+            try? await Task.sleep(nanoseconds: Self.saveDebounceSeconds * 1_000_000_000)
+            guard !Task.isCancelled else { return }
+            UserDefaults.standard.set(self.inputText, forKey: Self.cacheKey)
+        }
+    }
+
+    // MARK: - Actions
+
     /// Load sample markdown
     func loadSample() {
         inputText = Self.sampleMarkdown
     }
 
-    /// Clear input
+    /// Clear input and cache
     func clear() {
         inputText = ""
+        saveTask?.cancel()
+        UserDefaults.standard.removeObject(forKey: Self.cacheKey)
     }
 
     /// Paste from clipboard

@@ -44,6 +44,9 @@ struct MarkdownInputView: View {
                 .font(.system(.body, design: .monospaced))
                 .scrollContentBackground(.hidden)
                 .padding(8)
+                .onChange(of: state.inputText) {
+                    state.scheduleSave()
+                }
         }
         .background(Color(nsColor: .textBackgroundColor))
     }
