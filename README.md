@@ -43,39 +43,6 @@ A native macOS utilities app built with SwiftUI.
 
 Download the latest release from the [Releases](https://github.com/yourusername/utilities-macos/releases) page.
 
-## Architecture
-
-The app is designed with extensibility in mind, making it easy to add new utility tools:
-
-```
-Utilities/
-├── Models/
-│   └── Tool.swift              # Tool definitions
-├── ViewModels/
-│   ├── AppState.swift          # Global app state
-│   └── MarkdownPreviewState.swift
-├── Views/
-│   ├── SidebarView.swift       # Tool navigation
-│   ├── ToolDetailView.swift    # Tool router
-│   └── MarkdownPreview/        # Markdown tool views
-└── Utilities/
-    └── MarkdownConverter.swift # Markdown → HTML
-```
-
-## Adding New Tools
-
-1. Add a new case to `Tool.swift`:
-   ```swift
-   enum Tool: String, CaseIterable, Identifiable {
-       case markdownPreview = "Markdown Preview"
-       case jsonFormatter = "JSON Formatter"  // New tool
-   }
-   ```
-
-2. Create the tool's view and state files
-
-3. Add the view to `ToolDetailView.swift`
-
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
