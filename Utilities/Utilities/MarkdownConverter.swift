@@ -3,35 +3,20 @@ import Foundation
 /// Converts Markdown to HTML
 enum MarkdownConverter {
 
-    /// Default CSS for markdown styling
+    /// GitHub Markdown CSS styling (no explicit backgrounds for dark/light compatibility)
     static let defaultCSS = """
     :root {
         color-scheme: light dark;
     }
 
     body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        line-height: 1.6;
-        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        padding: 24px;
         max-width: 100%;
         margin: 0 auto;
-        color: #333;
-        background-color: #fff;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        body {
-            color: #e0e0e0;
-            background-color: #1e1e1e;
-        }
-
-        a { color: #6eb5ff; }
-        code { background-color: #2d2d2d; }
-        pre { background-color: #2d2d2d; }
-        blockquote { border-left-color: #555; color: #aaa; }
-        hr { border-color: #444; }
-        table th, table td { border-color: #444; }
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -41,45 +26,68 @@ enum MarkdownConverter {
         line-height: 1.25;
     }
 
-    h1 { font-size: 2em; border-bottom: 1px solid #eee; padding-bottom: 0.3em; }
-    h2 { font-size: 1.5em; border-bottom: 1px solid #eee; padding-bottom: 0.3em; }
+    h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid currentColor; opacity: 0.3; }
+    h1 { opacity: 1; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
+    h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
     h3 { font-size: 1.25em; }
     h4 { font-size: 1em; }
+    h5 { font-size: 0.875em; }
+    h6 { font-size: 0.85em; opacity: 0.7; }
 
     p { margin-top: 0; margin-bottom: 16px; }
 
-    a { color: #0366d6; text-decoration: none; }
+    a { color: #0969da; text-decoration: none; }
     a:hover { text-decoration: underline; }
+    @media (prefers-color-scheme: dark) {
+        a { color: #4493f8; }
+    }
+
+    strong { font-weight: 600; }
 
     code {
-        font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
-        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+        font-size: 85%;
         padding: 0.2em 0.4em;
-        background-color: #f6f8fa;
-        border-radius: 3px;
+        margin: 0;
+        border-radius: 6px;
+        white-space: break-spaces;
+        border: 1px solid rgba(128, 128, 128, 0.3);
     }
 
     pre {
-        font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
-        font-size: 0.9em;
+        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+        font-size: 85%;
         padding: 16px;
         overflow: auto;
-        background-color: #f6f8fa;
-        border-radius: 6px;
         line-height: 1.45;
+        border-radius: 6px;
+        margin-top: 0;
+        margin-bottom: 16px;
+        border: 1px solid rgba(128, 128, 128, 0.3);
     }
 
     pre code {
+        display: inline;
+        max-width: auto;
         padding: 0;
-        background-color: transparent;
+        margin: 0;
+        overflow: visible;
+        line-height: inherit;
+        word-wrap: normal;
+        border: 0;
+        font-size: 100%;
+        white-space: pre;
     }
 
     blockquote {
         margin: 0 0 16px 0;
         padding: 0 1em;
-        color: #6a737d;
-        border-left: 4px solid #dfe2e5;
+        opacity: 0.7;
+        border-left: 0.25em solid rgba(128, 128, 128, 0.5);
     }
+
+    blockquote > :first-child { margin-top: 0; }
+    blockquote > :last-child { margin-bottom: 0; }
 
     ul, ol {
         padding-left: 2em;
@@ -87,36 +95,53 @@ enum MarkdownConverter {
         margin-bottom: 16px;
     }
 
-    li { margin-bottom: 4px; }
-    li > p { margin-bottom: 8px; }
+    ul ul, ul ol, ol ol, ol ul {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    li { margin-top: 0.25em; }
+    li > p { margin-top: 16px; }
+    li + li { margin-top: 0.25em; }
 
     hr {
         height: 1px;
         padding: 0;
         margin: 24px 0;
-        background-color: #e1e4e8;
         border: 0;
+        border-top: 1px solid rgba(128, 128, 128, 0.3);
     }
 
     table {
+        border-spacing: 0;
         border-collapse: collapse;
+        margin-top: 0;
         margin-bottom: 16px;
-        width: 100%;
-    }
-
-    table th, table td {
-        padding: 8px 12px;
-        border: 1px solid #dfe2e5;
+        display: block;
+        width: max-content;
+        max-width: 100%;
+        overflow: auto;
     }
 
     table th {
         font-weight: 600;
-        background-color: #f6f8fa;
+        padding: 6px 13px;
+        border: 1px solid rgba(128, 128, 128, 0.3);
+    }
+
+    table td {
+        padding: 6px 13px;
+        border: 1px solid rgba(128, 128, 128, 0.3);
+    }
+
+    table tr {
+        border-top: 1px solid rgba(128, 128, 128, 0.3);
     }
 
     img {
         max-width: 100%;
         height: auto;
+        box-sizing: content-box;
     }
     """
 
