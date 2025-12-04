@@ -39,7 +39,7 @@ struct SidebarView: View {
     }
 
     private func sendFeedback() {
-        if let url = URL(string: "mailto:feedback@example.com?subject=UtilitiesMac%20Feedback") {
+        if let url = URL(string: "mailto:utilities-feedback@tianshilei.me?subject=Utilities%20Feedback") {
             NSWorkspace.shared.open(url)
         }
     }
