@@ -21,6 +21,7 @@
 		A100000C /* MarkdownConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001B /* MarkdownConverter.swift */; };
 		A100000D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = A10000D1 /* Markdown */; };
 		A100000E /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D /* AboutView.swift */; };
+		A100000F /* FindableTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001E /* FindableTextEditor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		A100001B /* MarkdownConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownConverter.swift; sourceTree = "<group>"; };
 		A100001C /* Utilities.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Utilities.entitlements; sourceTree = "<group>"; };
 		A100001D /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		A100001E /* FindableTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindableTextEditor.swift; sourceTree = "<group>"; };
 		A1000020 /* Utilities.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Utilities.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -126,6 +128,7 @@
 				A1000017 /* MarkdownPreviewView.swift */,
 				A1000018 /* MarkdownInputView.swift */,
 				A1000019 /* MarkdownOutputView.swift */,
+				A100001E /* FindableTextEditor.swift */,
 			);
 			path = MarkdownPreview;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				A100000B /* MarkdownPreviewState.swift in Sources */,
 				A100000C /* MarkdownConverter.swift in Sources */,
 				A100000E /* AboutView.swift in Sources */,
+				A100000F /* FindableTextEditor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

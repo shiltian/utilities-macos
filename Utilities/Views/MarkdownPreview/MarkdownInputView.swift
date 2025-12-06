@@ -39,11 +39,8 @@ struct MarkdownInputView: View {
 
             Divider()
 
-            // Text editor
-            TextEditor(text: $state.inputText)
-                .font(.system(.body, design: .monospaced))
-                .scrollContentBackground(.hidden)
-                .padding(8)
+            // Text editor with find bar support (⌘F)
+            FindableTextEditor(text: $state.inputText)
                 .onChange(of: state.inputText) {
                     state.scheduleSave()
                 }

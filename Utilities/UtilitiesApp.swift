@@ -14,6 +14,7 @@ struct UtilitiesApp: App {
         .defaultSize(width: 1200, height: 800)
         .commands {
             SidebarCommands()
+            TextEditingCommands()
 
             // Replace the default About menu item
             CommandGroup(replacing: .appInfo) {
