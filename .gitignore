@@ -19,6 +19,22 @@ xcuserdata/
 # Xcode breakpoints
 *.xcbkptlist
 
+# Xcode indexing and profiling
+*.indexstore
+Index/
+IndexStore/
+*.hmap
+*.profraw
+*.profdata
+*.linkFileList
+
+# Xcode workspace checks
+IDEWorkspaceChecks.plist
+
+# Xcode archives and builds
+*.xcarchive
+*.app
+
 # Swift Package Manager
 .build/
 .swiftpm/
