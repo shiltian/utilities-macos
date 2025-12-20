@@ -24,6 +24,11 @@ struct UtilitiesApp: App {
             }
         }
 
+        // Settings window (⌘,)
+        Settings {
+            SettingsView()
+        }
+
         // About window
         Window("About Utilities", id: "about") {
             AboutView()

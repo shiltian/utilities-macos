@@ -7,11 +7,17 @@ final class AppState {
     var selectedTool: Tool = .markdownPreview
     var searchText: String = ""
 
+    /// Reference to app settings
+    private let settings = AppSettings.shared
+
+    /// Returns available tools filtered by search text and experimental settings
     var filteredTools: [Tool] {
+        let availableTools = Tool.availableTools(includeExperimental: settings.enableExperimentalFeatures)
+
         if searchText.isEmpty {
-            return Tool.allCases
+            return availableTools
         }
-        return Tool.allCases.filter {
+        return availableTools.filter {
             $0.displayName.localizedCaseInsensitiveContains(searchText)
         }
     }

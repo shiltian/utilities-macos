@@ -8,6 +8,8 @@ struct ToolDetailView: View {
             switch appState.selectedTool {
             case .markdownPreview:
                 MarkdownPreviewView()
+            case .llvmMcSp3Converter:
+                LLVMEncodingConverterView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

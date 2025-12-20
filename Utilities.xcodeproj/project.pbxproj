@@ -22,6 +22,11 @@
 		A100000D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = A10000D1 /* Markdown */; };
 		A100000E /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D /* AboutView.swift */; };
 		A100000F /* FindableTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001E /* FindableTextEditor.swift */; };
+		A1000110 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000021 /* Settings.swift */; };
+		A1000111 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022 /* SettingsView.swift */; };
+		A1000112 /* LLVMEncodingConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000023 /* LLVMEncodingConverter.swift */; };
+		A1000113 /* LLVMEncodingConverterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000024 /* LLVMEncodingConverterState.swift */; };
+		A1000114 /* LLVMEncodingConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000025 /* LLVMEncodingConverterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +46,11 @@
 		A100001D /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A100001E /* FindableTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindableTextEditor.swift; sourceTree = "<group>"; };
 		A1000020 /* Utilities.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Utilities.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000021 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		A1000022 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A1000023 /* LLVMEncodingConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLVMEncodingConverter.swift; sourceTree = "<group>"; };
+		A1000024 /* LLVMEncodingConverterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLVMEncodingConverterState.swift; sourceTree = "<group>"; };
+		A1000025 /* LLVMEncodingConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLVMEncodingConverterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				A1000013 /* Tool.swift */,
+				A1000021 /* Settings.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -99,6 +110,7 @@
 			children = (
 				A1000014 /* AppState.swift */,
 				A100001A /* MarkdownPreviewState.swift */,
+				A1000024 /* LLVMEncodingConverterState.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -109,7 +121,9 @@
 				A100001D /* AboutView.swift */,
 				A1000015 /* SidebarView.swift */,
 				A1000016 /* ToolDetailView.swift */,
+				A1000022 /* SettingsView.swift */,
 				A1000047 /* MarkdownPreview */,
+				A1000048 /* LLVMEncodingConverter */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -118,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				A100001B /* MarkdownConverter.swift */,
+				A1000023 /* LLVMEncodingConverter.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -131,6 +146,14 @@
 				A100001E /* FindableTextEditor.swift */,
 			);
 			path = MarkdownPreview;
+			sourceTree = "<group>";
+		};
+		A1000048 /* LLVMEncodingConverter */ = {
+			isa = PBXGroup;
+			children = (
+				A1000025 /* LLVMEncodingConverterView.swift */,
+			);
+			path = LLVMEncodingConverter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -221,6 +244,11 @@
 				A100000C /* MarkdownConverter.swift in Sources */,
 				A100000E /* AboutView.swift in Sources */,
 				A100000F /* FindableTextEditor.swift in Sources */,
+				A1000110 /* Settings.swift in Sources */,
+				A1000111 /* SettingsView.swift in Sources */,
+				A1000112 /* LLVMEncodingConverter.swift in Sources */,
+				A1000113 /* LLVMEncodingConverterState.swift in Sources */,
+				A1000114 /* LLVMEncodingConverterView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,8 +381,9 @@
 				CODE_SIGN_ENTITLEMENTS = Utilities/Utilities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = F9M3UZ669L;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -366,7 +395,6 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				INFOPLIST_KEY_CFBundleDisplayName = Utilities;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tianshilei.utilities;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -383,8 +411,9 @@
 				CODE_SIGN_ENTITLEMENTS = Utilities/Utilities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = F9M3UZ669L;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -396,7 +425,6 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				INFOPLIST_KEY_CFBundleDisplayName = Utilities;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tianshilei.utilities;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

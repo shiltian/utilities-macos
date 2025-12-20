@@ -3,8 +3,14 @@ import SwiftUI
 struct SidebarView: View {
     @Environment(AppState.self) private var appState
 
+    /// Observe settings to reactively show/hide experimental tools
+    private var settings: AppSettings { AppSettings.shared }
+
     var body: some View {
         @Bindable var state = appState
+
+        // Access settings to establish observation tracking
+        let _ = settings.enableExperimentalFeatures
 
         List(selection: $state.selectedTool) {
             ForEach(appState.filteredTools) { tool in
