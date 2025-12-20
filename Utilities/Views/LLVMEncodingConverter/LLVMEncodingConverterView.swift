@@ -99,21 +99,7 @@ struct EncodingPanel: View {
             Divider()
 
             // Text editor
-            ZStack(alignment: .topLeading) {
-                TextEditor(text: $text)
-                    .font(.system(.body, design: .monospaced))
-                    .scrollContentBackground(.hidden)
-
-                if text.isEmpty {
-                    Text(placeholder)
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(.tertiary)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 8)
-                        .allowsHitTesting(false)
-                }
-            }
-            .padding(4)
+            MonospacedTextEditor(text: $text, placeholder: placeholder)
         }
         .background(Color(nsColor: .textBackgroundColor))
     }
