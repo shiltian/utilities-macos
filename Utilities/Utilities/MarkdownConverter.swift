@@ -188,6 +188,31 @@ enum MarkdownConverter {
     static func toPreviewHTML(_ markdown: String) -> String {
         toHTMLWithCSS(markdown)
     }
+
+    // MARK: - Outlook-Compatible HTML
+
+    /// Convert markdown to HTML with inline styles for Outlook (body content only)
+    static func toOutlookHTML(_ markdown: String) -> String {
+        let document = Document(parsing: markdown)
+        var outlookVisitor = OutlookHTMLVisitor()
+        return outlookVisitor.visitDocument(document)
+    }
+
+    /// Convert markdown to a full HTML document for Outlook preview
+    static func toOutlookPreviewHTML(_ markdown: String) -> String {
+        let bodyHTML = toOutlookHTML(markdown)
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="margin: 0; padding: 16px;">
+        \(bodyHTML)
+        </body>
+        </html>
+        """
+    }
 }
 
 // MARK: - HTML Visitor
@@ -365,6 +390,218 @@ private struct HTMLVisitor: MarkupVisitor {
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> String {
         if let destination = symbolLink.destination {
             return "<code>\(escapeHTML(destination))</code>"
+        }
+        return ""
+    }
+
+    // MARK: - Helpers
+
+    private func escapeHTML(_ string: String) -> String {
+        string
+            .replacingOccurrences(of: "&", with: "&amp;")
+            .replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;")
+            .replacingOccurrences(of: "\"", with: "&quot;")
+            .replacingOccurrences(of: "'", with: "&#39;")
+    }
+}
+
+// MARK: - Outlook HTML Visitor
+
+/// Walks the Markdown AST and generates HTML with inline styles for Outlook compatibility
+private struct OutlookHTMLVisitor: MarkupVisitor {
+    typealias Result = String
+
+    // MARK: - Style Constants
+
+    private enum Styles {
+        static let fontFamily = "'Aptos', 'Calibri', Arial, sans-serif"
+        static let codeFontFamily = "Consolas, 'Courier New', monospace"
+        static let fontSize = "12pt"
+        static let codeFontSize = "11pt"
+        static let lineHeight = "1.08"
+        static let textColor = "#000000"
+
+        static let paragraphStyle = "font-family: \(fontFamily); font-size: \(fontSize); line-height: \(lineHeight); margin: 0 0 3pt 0; color: \(textColor);"
+        static let listStyle = "font-family: \(fontFamily); font-size: \(fontSize); line-height: \(lineHeight); margin: 0 0 2pt 0; padding-left: 31pt; color: \(textColor);"
+        static let listItemStyle = "margin: 0;"
+        static let codeBlockStyle = "font-family: \(codeFontFamily); font-size: \(codeFontSize); line-height: 1.4; background-color: #f5f5f5; padding: 12pt; margin: 4pt 0 4pt 0; border: 1px solid #e0e0e0; border-radius: 4px; white-space: pre-wrap;"
+        static let inlineCodeStyle = "font-family: \(codeFontFamily); font-size: \(codeFontSize); background-color: #f0f0f0; padding: 2px 4px; border-radius: 3px;"
+        static let blockquoteStyle = "font-family: \(fontFamily); font-size: \(fontSize); line-height: \(lineHeight); margin: 0 0 3pt 0; padding: 0 0 0 12pt; border-left: 3px solid #e0e0e0; color: #666666;"
+        static let linkColor = "#0969da"
+        static let tableStyle = "border-collapse: collapse; margin: 4pt 0 4pt 0;"
+        static let tableCellStyle = "font-family: \(fontFamily); font-size: \(fontSize); padding: 6pt 12pt; border: 1px solid #e0e0e0;"
+        static let tableHeaderStyle = "font-family: \(fontFamily); font-size: \(fontSize); padding: 6pt 12pt; border: 1px solid #e0e0e0; font-weight: 600; background-color: #f5f5f5;"
+    }
+
+    // MARK: - Document
+
+    mutating func defaultVisit(_ markup: any Markup) -> String {
+        var result = ""
+        for child in markup.children {
+            result += visit(child)
+        }
+        return result
+    }
+
+    mutating func visitDocument(_ document: Document) -> String {
+        defaultVisit(document)
+    }
+
+    // MARK: - Block Elements
+
+    mutating func visitParagraph(_ paragraph: Paragraph) -> String {
+        "<p style=\"\(Styles.paragraphStyle)\">\(defaultVisit(paragraph))</p>\n"
+    }
+
+    mutating func visitHeading(_ heading: Heading) -> String {
+        // Render headings as bold paragraphs for Outlook compatibility
+        "<p style=\"\(Styles.paragraphStyle)\"><strong style=\"font-weight: 600;\">\(defaultVisit(heading))</strong></p>\n"
+    }
+
+    mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> String {
+        "<div style=\"\(Styles.blockquoteStyle)\">\(defaultVisit(blockQuote))</div>\n"
+    }
+
+    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> String {
+        let escaped = escapeHTML(codeBlock.code)
+        return "<pre style=\"\(Styles.codeBlockStyle)\"><code style=\"font-family: inherit; font-size: inherit;\">\(escaped)</code></pre>\n"
+    }
+
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> String {
+        "<hr style=\"border: 0; border-top: 1px solid #e0e0e0; margin: 8pt 0;\">\n"
+    }
+
+    mutating func visitHTMLBlock(_ html: HTMLBlock) -> String {
+        html.rawHTML
+    }
+
+    // MARK: - List Elements
+
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> String {
+        "<ul style=\"\(Styles.listStyle)\">\n\(defaultVisit(unorderedList))</ul>\n"
+    }
+
+    mutating func visitOrderedList(_ orderedList: OrderedList) -> String {
+        let start = orderedList.startIndex
+        if start == 1 {
+            return "<ol style=\"\(Styles.listStyle)\">\n\(defaultVisit(orderedList))</ol>\n"
+        }
+        return "<ol start=\"\(start)\" style=\"\(Styles.listStyle)\">\n\(defaultVisit(orderedList))</ol>\n"
+    }
+
+    mutating func visitListItem(_ listItem: ListItem) -> String {
+        if let checkbox = listItem.checkbox {
+            let checked = checkbox == .checked ? "☑" : "☐"
+            return "<li style=\"\(Styles.listItemStyle)\">\(checked) \(defaultVisit(listItem))</li>\n"
+        }
+        return "<li style=\"\(Styles.listItemStyle)\">\(defaultVisit(listItem))</li>\n"
+    }
+
+    // MARK: - Table Elements
+
+    mutating func visitTable(_ table: Table) -> String {
+        "<table style=\"\(Styles.tableStyle)\">\n\(defaultVisit(table))</table>\n"
+    }
+
+    mutating func visitTableHead(_ tableHead: Table.Head) -> String {
+        "<thead>\n<tr>\n\(defaultVisit(tableHead))</tr>\n</thead>\n"
+    }
+
+    mutating func visitTableBody(_ tableBody: Table.Body) -> String {
+        if tableBody.childCount == 0 {
+            return ""
+        }
+        return "<tbody>\n\(defaultVisit(tableBody))</tbody>\n"
+    }
+
+    mutating func visitTableRow(_ tableRow: Table.Row) -> String {
+        "<tr>\n\(defaultVisit(tableRow))</tr>\n"
+    }
+
+    mutating func visitTableCell(_ tableCell: Table.Cell) -> String {
+        let isHeader = tableCell.parent is Table.Head
+        let style = isHeader ? Styles.tableHeaderStyle : Styles.tableCellStyle
+        let tag = isHeader ? "th" : "td"
+
+        // Find column index by position in parent
+        var columnIndex = 0
+        if let parent = tableCell.parent {
+            for (index, child) in parent.children.enumerated() {
+                if child.range?.lowerBound == tableCell.range?.lowerBound {
+                    columnIndex = index
+                    break
+                }
+            }
+        }
+
+        // Get alignment from table
+        var alignmentStyle = ""
+        if let table = tableCell.parent?.parent as? Table,
+           columnIndex < table.columnAlignments.count,
+           let columnAlignment = table.columnAlignments[columnIndex] {
+            switch columnAlignment {
+            case .left:
+                alignmentStyle = " text-align: left;"
+            case .center:
+                alignmentStyle = " text-align: center;"
+            case .right:
+                alignmentStyle = " text-align: right;"
+            }
+        }
+
+        return "<\(tag) style=\"\(style)\(alignmentStyle)\">\(defaultVisit(tableCell))</\(tag)>\n"
+    }
+
+    // MARK: - Inline Elements
+
+    mutating func visitText(_ text: Text) -> String {
+        escapeHTML(text.string)
+    }
+
+    mutating func visitEmphasis(_ emphasis: Emphasis) -> String {
+        "<em style=\"font-style: italic;\">\(defaultVisit(emphasis))</em>"
+    }
+
+    mutating func visitStrong(_ strong: Strong) -> String {
+        "<strong style=\"font-weight: 600;\">\(defaultVisit(strong))</strong>"
+    }
+
+    mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> String {
+        "<del style=\"text-decoration: line-through;\">\(defaultVisit(strikethrough))</del>"
+    }
+
+    mutating func visitInlineCode(_ inlineCode: InlineCode) -> String {
+        "<code style=\"\(Styles.inlineCodeStyle)\">\(escapeHTML(inlineCode.code))</code>"
+    }
+
+    mutating func visitLink(_ link: Link) -> String {
+        let title = link.title.map { " title=\"\(escapeHTML($0))\"" } ?? ""
+        return "<a href=\"\(escapeHTML(link.destination ?? ""))\" style=\"color: \(Styles.linkColor); text-decoration: none;\"\(title)>\(defaultVisit(link))</a>"
+    }
+
+    mutating func visitImage(_ image: Image) -> String {
+        let alt = escapeHTML(image.plainText)
+        let src = escapeHTML(image.source ?? "")
+        let title = image.title.map { " title=\"\(escapeHTML($0))\"" } ?? ""
+        return "<img src=\"\(src)\" alt=\"\(alt)\"\(title) style=\"max-width: 100%;\">"
+    }
+
+    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> String {
+        "\n"
+    }
+
+    mutating func visitLineBreak(_ lineBreak: LineBreak) -> String {
+        "<br>\n"
+    }
+
+    mutating func visitInlineHTML(_ html: InlineHTML) -> String {
+        html.rawHTML
+    }
+
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> String {
+        if let destination = symbolLink.destination {
+            return "<code style=\"\(Styles.inlineCodeStyle)\">\(escapeHTML(destination))</code>"
         }
         return ""
     }

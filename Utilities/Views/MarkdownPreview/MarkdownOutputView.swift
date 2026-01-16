@@ -16,13 +16,20 @@ struct MarkdownOutputView: View {
 
                 HStack(spacing: 8) {
                     // Action button changes based on mode
-                    if state.outputMode == .preview {
+                    switch state.outputMode {
+                    case .preview:
                         Button("Open in Browser") {
                             state.openInBrowser()
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.small)
-                    } else {
+                    case .outlookPreview:
+                        Button("Copy for Outlook") {
+                            state.copyForOutlook()
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    case .html, .htmlCSS:
                         Button("Copy") {
                             state.copyOutput()
                         }
@@ -37,7 +44,7 @@ struct MarkdownOutputView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .frame(width: 120)
+                    .frame(width: 140)
                     .controlSize(.small)
                 }
             }
@@ -52,6 +59,8 @@ struct MarkdownOutputView: View {
                 switch state.outputMode {
                 case .preview:
                     WebView(html: state.previewHTML)
+                case .outlookPreview:
+                    WebView(html: state.outlookPreviewHTML)
                 case .html:
                     CodeView(code: state.htmlOutput)
                 case .htmlCSS:
@@ -98,6 +107,14 @@ struct CodeView: View {
 #Preview("Preview Mode") {
     let state = MarkdownPreviewState()
     state.loadSample()
+    return MarkdownOutputView(state: state)
+        .frame(width: 500, height: 600)
+}
+
+#Preview("Outlook Preview Mode") {
+    let state = MarkdownPreviewState()
+    state.loadSample()
+    state.outputMode = .outlookPreview
     return MarkdownOutputView(state: state)
         .frame(width: 500, height: 600)
 }

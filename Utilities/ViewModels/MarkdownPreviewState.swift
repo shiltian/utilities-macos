@@ -4,6 +4,7 @@ import Observation
 /// Output mode for the markdown preview
 enum MarkdownOutputMode: String, CaseIterable {
     case preview = "Preview"
+    case outlookPreview = "Outlook Preview"
     case html = "HTML"
     case htmlCSS = "HTML + CSS"
 }
@@ -103,6 +104,16 @@ final class MarkdownPreviewState {
         MarkdownConverter.toPreviewHTML(inputText)
     }
 
+    /// Full HTML document for Outlook preview (with inline styles)
+    var outlookPreviewHTML: String {
+        MarkdownConverter.toOutlookPreviewHTML(inputText)
+    }
+
+    /// HTML body content with inline styles for Outlook (for clipboard)
+    var outlookHTML: String {
+        MarkdownConverter.toOutlookHTML(inputText)
+    }
+
     // MARK: - Auto-Save
 
     /// Schedule a debounced save of the input text to cache.
@@ -143,6 +154,10 @@ final class MarkdownPreviewState {
         switch outputMode {
         case .preview:
             textToCopy = htmlOutput
+        case .outlookPreview:
+            // For Outlook Preview, use the dedicated copyForOutlook method
+            copyForOutlook()
+            return
         case .html:
             textToCopy = htmlOutput
         case .htmlCSS:
@@ -152,9 +167,69 @@ final class MarkdownPreviewState {
         NSPasteboard.general.setString(textToCopy, forType: .string)
     }
 
+    /// Copy Outlook-formatted HTML as rich text to clipboard
+    func copyForOutlook() {
+        let html = outlookHTML
+
+        // Wrap in basic HTML structure for proper parsing
+        let fullHTML = """
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"></head>
+        <body>\(html)</body>
+        </html>
+        """
+
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+
+        let item = NSPasteboardItem()
+
+        // Set HTML format
+        item.setString(fullHTML, forType: .html)
+
+        // Try to create RTF from HTML for broader compatibility
+        if let htmlData = fullHTML.data(using: .utf8),
+           let attrString = try? NSAttributedString(
+               data: htmlData,
+               options: [
+                   .documentType: NSAttributedString.DocumentType.html,
+                   .characterEncoding: String.Encoding.utf8.rawValue
+               ],
+               documentAttributes: nil
+           ),
+           let rtfData = try? attrString.data(
+               from: NSRange(location: 0, length: attrString.length),
+               documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+           ) {
+            item.setData(rtfData, forType: .rtf)
+        }
+
+        // Set plain text fallback (strip HTML tags)
+        let plainText = html.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&#39;", with: "'")
+            .replacingOccurrences(of: "\n\n+", with: "\n", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        item.setString(plainText, forType: .string)
+
+        pasteboard.writeObjects([item])
+    }
+
     /// Open in browser
     func openInBrowser() {
-        let htmlContent = outputMode == .htmlCSS ? htmlWithCSSOutput : previewHTML
+        let htmlContent: String
+        switch outputMode {
+        case .outlookPreview:
+            htmlContent = outlookPreviewHTML
+        case .htmlCSS:
+            htmlContent = htmlWithCSSOutput
+        default:
+            htmlContent = previewHTML
+        }
 
         // Create temporary HTML file
         let tempDir = FileManager.default.temporaryDirectory
