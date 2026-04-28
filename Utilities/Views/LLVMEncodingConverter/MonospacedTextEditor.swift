@@ -5,6 +5,7 @@ import AppKit
 struct MonospacedTextEditor: NSViewRepresentable {
     @Binding var text: String
     var placeholder: String = ""
+    var isEditable: Bool = true
 
     func makeNSView(context: Context) -> NSScrollView {
         let textView = PlaceholderTextView()
@@ -31,6 +32,8 @@ struct MonospacedTextEditor: NSViewRepresentable {
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
         textView.isAutomaticSpellingCorrectionEnabled = false
+        textView.isEditable = isEditable
+        textView.isSelectable = true
 
         // Appearance
         textView.backgroundColor = .textBackgroundColor
@@ -62,6 +65,10 @@ struct MonospacedTextEditor: NSViewRepresentable {
         // Update placeholder if changed
         if textView.placeholderString != placeholder {
             textView.placeholderString = placeholder
+        }
+
+        if textView.isEditable != isEditable {
+            textView.isEditable = isEditable
         }
     }
 

@@ -2,9 +2,10 @@ import SwiftUI
 import Observation
 
 /// Application settings stored in UserDefaults
+@MainActor
 @Observable
 final class AppSettings {
-    private static let defaults = UserDefaults.standard
+    private static nonisolated(unsafe) let defaults = UserDefaults.standard
 
     // MARK: - Keys
     private enum Keys {

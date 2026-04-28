@@ -28,6 +28,9 @@
 		A1000113 /* LLVMEncodingConverterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000024 /* LLVMEncodingConverterState.swift */; };
 		A1000114 /* LLVMEncodingConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000025 /* LLVMEncodingConverterView.swift */; };
 		A1000115 /* MonospacedTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000026 /* MonospacedTextEditor.swift */; };
+		A1000116 /* TextWrapConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000027 /* TextWrapConverter.swift */; };
+		A1000117 /* TextWrapUnwrapState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000028 /* TextWrapUnwrapState.swift */; };
+		A1000118 /* TextWrapUnwrapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000029 /* TextWrapUnwrapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +56,9 @@
 		A1000024 /* LLVMEncodingConverterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLVMEncodingConverterState.swift; sourceTree = "<group>"; };
 		A1000025 /* LLVMEncodingConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLVMEncodingConverterView.swift; sourceTree = "<group>"; };
 		A1000026 /* MonospacedTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonospacedTextEditor.swift; sourceTree = "<group>"; };
+		A1000027 /* TextWrapConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWrapConverter.swift; sourceTree = "<group>"; };
+		A1000028 /* TextWrapUnwrapState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWrapUnwrapState.swift; sourceTree = "<group>"; };
+		A1000029 /* TextWrapUnwrapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWrapUnwrapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +119,7 @@
 				A1000014 /* AppState.swift */,
 				A100001A /* MarkdownPreviewState.swift */,
 				A1000024 /* LLVMEncodingConverterState.swift */,
+				A1000028 /* TextWrapUnwrapState.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -126,6 +133,7 @@
 				A1000022 /* SettingsView.swift */,
 				A1000047 /* MarkdownPreview */,
 				A1000048 /* LLVMEncodingConverter */,
+				A1000049 /* TextWrapUnwrap */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -135,6 +143,7 @@
 			children = (
 				A100001B /* MarkdownConverter.swift */,
 				A1000023 /* LLVMEncodingConverter.swift */,
+				A1000027 /* TextWrapConverter.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -157,6 +166,14 @@
 				A1000026 /* MonospacedTextEditor.swift */,
 			);
 			path = LLVMEncodingConverter;
+			sourceTree = "<group>";
+		};
+		A1000049 /* TextWrapUnwrap */ = {
+			isa = PBXGroup;
+			children = (
+				A1000029 /* TextWrapUnwrapView.swift */,
+			);
+			path = TextWrapUnwrap;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -253,6 +270,9 @@
 				A1000113 /* LLVMEncodingConverterState.swift in Sources */,
 				A1000114 /* LLVMEncodingConverterView.swift in Sources */,
 				A1000115 /* MonospacedTextEditor.swift in Sources */,
+				A1000116 /* TextWrapConverter.swift in Sources */,
+				A1000117 /* TextWrapUnwrapState.swift in Sources */,
+				A1000118 /* TextWrapUnwrapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,7 +405,7 @@
 				CODE_SIGN_ENTITLEMENTS = Utilities/Utilities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = F9M3UZ669L;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -398,7 +418,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tianshilei.utilities;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -415,7 +435,7 @@
 				CODE_SIGN_ENTITLEMENTS = Utilities/Utilities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = F9M3UZ669L;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -428,7 +448,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tianshilei.utilities;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

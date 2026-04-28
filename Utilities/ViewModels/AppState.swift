@@ -2,6 +2,7 @@ import SwiftUI
 import Observation
 
 /// Global app state using the new Observable macro (macOS 14+)
+@MainActor
 @Observable
 final class AppState {
     var selectedTool: Tool = .markdownPreview
