@@ -10,6 +10,8 @@ struct ToolDetailView: View {
                 MarkdownPreviewView()
             case .textWrapUnwrap:
                 TextWrapUnwrapView()
+            case .normalizeText:
+                NormalizeTextView()
             case .llvmMcSp3Converter:
                 LLVMEncodingConverterView()
             }

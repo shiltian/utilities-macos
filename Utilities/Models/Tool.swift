@@ -4,6 +4,7 @@ import SwiftUI
 enum Tool: String, CaseIterable, Identifiable {
     case markdownPreview = "Markdown Preview"
     case textWrapUnwrap = "Text Wrap / Unwrap"
+    case normalizeText = "Normalize Text"
     case llvmMcSp3Converter = "LLVM MC and SP3 Converter"
     // Future tools can be added here:
     // case jsonFormatter = "JSON Formatter"
@@ -21,6 +22,8 @@ enum Tool: String, CaseIterable, Identifiable {
             return "doc.richtext"
         case .textWrapUnwrap:
             return "text.alignleft"
+        case .normalizeText:
+            return "textformat.abc"
         case .llvmMcSp3Converter:
             return "arrow.left.arrow.right"
         }
@@ -32,6 +35,8 @@ enum Tool: String, CaseIterable, Identifiable {
             return "⌘1"
         case .textWrapUnwrap:
             return "⌘2"
+        case .normalizeText:
+            return "⌘3"
         case .llvmMcSp3Converter:
             return nil
         }
@@ -40,7 +45,7 @@ enum Tool: String, CaseIterable, Identifiable {
     /// Whether this tool is experimental and requires opt-in
     var isExperimental: Bool {
         switch self {
-        case .markdownPreview, .textWrapUnwrap:
+        case .markdownPreview, .textWrapUnwrap, .normalizeText:
             return false
         case .llvmMcSp3Converter:
             return true

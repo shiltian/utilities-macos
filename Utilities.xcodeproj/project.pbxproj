@@ -31,6 +31,9 @@
 		A1000116 /* TextWrapConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000027 /* TextWrapConverter.swift */; };
 		A1000117 /* TextWrapUnwrapState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000028 /* TextWrapUnwrapState.swift */; };
 		A1000118 /* TextWrapUnwrapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000029 /* TextWrapUnwrapView.swift */; };
+		A1000119 /* TextNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002A /* TextNormalizer.swift */; };
+		A100011A /* NormalizeTextState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002B /* NormalizeTextState.swift */; };
+		A100011B /* NormalizeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C /* NormalizeTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +62,9 @@
 		A1000027 /* TextWrapConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWrapConverter.swift; sourceTree = "<group>"; };
 		A1000028 /* TextWrapUnwrapState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWrapUnwrapState.swift; sourceTree = "<group>"; };
 		A1000029 /* TextWrapUnwrapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWrapUnwrapView.swift; sourceTree = "<group>"; };
+		A100002A /* TextNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextNormalizer.swift; sourceTree = "<group>"; };
+		A100002B /* NormalizeTextState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizeTextState.swift; sourceTree = "<group>"; };
+		A100002C /* NormalizeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizeTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +126,7 @@
 				A100001A /* MarkdownPreviewState.swift */,
 				A1000024 /* LLVMEncodingConverterState.swift */,
 				A1000028 /* TextWrapUnwrapState.swift */,
+				A100002B /* NormalizeTextState.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -134,6 +141,7 @@
 				A1000047 /* MarkdownPreview */,
 				A1000048 /* LLVMEncodingConverter */,
 				A1000049 /* TextWrapUnwrap */,
+				A100004A /* NormalizeText */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -144,6 +152,7 @@
 				A100001B /* MarkdownConverter.swift */,
 				A1000023 /* LLVMEncodingConverter.swift */,
 				A1000027 /* TextWrapConverter.swift */,
+				A100002A /* TextNormalizer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -174,6 +183,14 @@
 				A1000029 /* TextWrapUnwrapView.swift */,
 			);
 			path = TextWrapUnwrap;
+			sourceTree = "<group>";
+		};
+		A100004A /* NormalizeText */ = {
+			isa = PBXGroup;
+			children = (
+				A100002C /* NormalizeTextView.swift */,
+			);
+			path = NormalizeText;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,6 +290,9 @@
 				A1000116 /* TextWrapConverter.swift in Sources */,
 				A1000117 /* TextWrapUnwrapState.swift in Sources */,
 				A1000118 /* TextWrapUnwrapView.swift in Sources */,
+				A1000119 /* TextNormalizer.swift in Sources */,
+				A100011A /* NormalizeTextState.swift in Sources */,
+				A100011B /* NormalizeTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,7 +425,7 @@
 				CODE_SIGN_ENTITLEMENTS = Utilities/Utilities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = F9M3UZ669L;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -435,7 +455,7 @@
 				CODE_SIGN_ENTITLEMENTS = Utilities/Utilities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = F9M3UZ669L;
 				ENABLE_HARDENED_RUNTIME = YES;
