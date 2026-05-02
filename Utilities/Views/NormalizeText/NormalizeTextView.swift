@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct NormalizeTextView: View {
-    @State private var state = NormalizeTextState()
+    @Bindable var state: NormalizeTextState
 
     var body: some View {
         HStack(spacing: 0) {
@@ -50,6 +50,6 @@ struct NormalizeTextView: View {
 }
 
 #Preview {
-    NormalizeTextView()
+    NormalizeTextView(state: NormalizeTextState())
         .frame(width: 1000, height: 600)
 }

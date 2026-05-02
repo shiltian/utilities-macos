@@ -7,13 +7,13 @@ struct ToolDetailView: View {
         Group {
             switch appState.selectedTool {
             case .markdownPreview:
-                MarkdownPreviewView()
+                MarkdownPreviewView(state: appState.markdownPreviewState)
             case .textWrapUnwrap:
-                TextWrapUnwrapView()
+                TextWrapUnwrapView(state: appState.textWrapUnwrapState)
             case .normalizeText:
-                NormalizeTextView()
+                NormalizeTextView(state: appState.normalizeTextState)
             case .llvmMcSp3Converter:
-                LLVMEncodingConverterView()
+                LLVMEncodingConverterView(state: appState.llvmEncodingConverterState)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

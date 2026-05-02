@@ -8,6 +8,11 @@ final class AppState {
     var selectedTool: Tool = .markdownPreview
     var searchText: String = ""
 
+    let markdownPreviewState = MarkdownPreviewState()
+    let textWrapUnwrapState = TextWrapUnwrapState()
+    let normalizeTextState = NormalizeTextState()
+    let llvmEncodingConverterState = LLVMEncodingConverterState()
+
     /// Reference to app settings
     private let settings = AppSettings.shared
 

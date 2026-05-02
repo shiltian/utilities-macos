@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LLVMEncodingConverterView: View {
-    @State private var state = LLVMEncodingConverterState()
+    @Bindable var state: LLVMEncodingConverterState
 
     var body: some View {
         HStack(spacing: 0) {
@@ -139,7 +139,7 @@ struct ConversionButtons: View {
 }
 
 #Preview {
-    LLVMEncodingConverterView()
+    LLVMEncodingConverterView(state: LLVMEncodingConverterState())
         .frame(width: 1000, height: 600)
 }
 

@@ -41,9 +41,6 @@ struct MarkdownInputView: View {
 
             // Text editor with find bar support (⌘F)
             FindableTextEditor(text: $state.inputText)
-                .onChange(of: state.inputText) {
-                    state.scheduleSave()
-                }
         }
         .background(Color(nsColor: .textBackgroundColor))
     }

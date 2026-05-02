@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MarkdownPreviewView: View {
-    @State private var state = MarkdownPreviewState()
+    @Bindable var state: MarkdownPreviewState
 
     var body: some View {
         HSplitView {
@@ -22,7 +22,7 @@ struct MarkdownPreviewView: View {
 }
 
 #Preview {
-    MarkdownPreviewView()
+    MarkdownPreviewView(state: MarkdownPreviewState())
         .frame(width: 1000, height: 600)
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TextWrapUnwrapView: View {
-    @State private var state = TextWrapUnwrapState()
+    @Bindable var state: TextWrapUnwrapState
 
     var body: some View {
         HStack(spacing: 0) {
@@ -147,6 +147,6 @@ struct TextWrapPanel: View {
 }
 
 #Preview {
-    TextWrapUnwrapView()
+    TextWrapUnwrapView(state: TextWrapUnwrapState())
         .frame(width: 1000, height: 600)
 }

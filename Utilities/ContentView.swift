@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(AppState.self) private var appState
+    @State private var appState = AppState()
 
     var body: some View {
         NavigationSplitView {
@@ -11,11 +11,11 @@ struct ContentView: View {
             ToolDetailView()
         }
         .navigationSplitViewStyle(.balanced)
+        .environment(appState)
     }
 }
 
 #Preview {
     ContentView()
-        .environment(AppState())
 }
 
