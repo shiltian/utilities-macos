@@ -35,7 +35,7 @@ struct SidebarView: View {
                 .buttonStyle(.borderless)
                 .controlSize(.small)
 
-                Text("Utilities 1.0")
+                Text("Utilities \(appVersion) (\(buildNumber))")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -48,6 +48,14 @@ struct SidebarView: View {
         if let url = URL(string: "mailto:utilities-feedback@tianshilei.me?subject=Utilities%20Feedback") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
     }
 }
 
